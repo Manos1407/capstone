@@ -1,0 +1,5 @@
+services:
+  capstone1407:
+    image: myapp
+    ports:
+    - "80:80"
