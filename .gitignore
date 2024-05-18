@@ -1,3 +1,16 @@
 # Ignore sensitive files and temporary build output
 .env 
 build/*
+# Ignore SSH keys and related files
+*.key
+*.pub
+*.pem
+*.ppk
+*.p12
+
+# Ignore known SSH directories
+.ssh/
+
+# Ignore configuration files
+ssh_config
+
