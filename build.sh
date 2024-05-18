@@ -1,14 +1,12 @@
 #!/bin/bash
 
-# Set default image name and tag
+# Set default image name
 IMAGE_NAME="mycapstone_app"
-IMAGE_TAG="latest"
 
 # Allow customization through arguments
-while getopts ":n:t:" opt; do
+while getopts ":n:" opt; do
   case $opt in
     n) IMAGE_NAME="$OPTARG" ;;
-    t) IMAGE_TAG="$OPTARG" ;;
     \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
   esac
 done
@@ -16,8 +14,18 @@ done
 # Shift arguments after processing options
 shift $((OPTIND-1))
 
-# Build context (replace with your actual project directory)
-BUILD_CONTEXT="/home/ubuntu/devops-build/build"  # Update this path
+# Set the image tag based on the branch name
+if [ "$BRANCH_NAME" == "dev" ]; then
+    IMAGE_TAG="dev"
+elif [ "$BRANCH_NAME" == "master" ]; then
+    IMAGE_TAG="latest"
+else
+    # Default to "latest" tag for other branches
+    IMAGE_TAG="latest"
+fi
+
+# Set the build context directory
+BUILD_CONTEXT="/home/ubuntu/devops-build/build"  # Update this path as needed
 
 # Validate Dockerfile existence
 if [[ ! -f Dockerfile ]]; then
@@ -25,15 +33,9 @@ if [[ ! -f Dockerfile ]]; then
   exit 1
 fi
 
-# Multi-stage build for efficiency (replace with your commands)
-echo "Building base image..."
-docker build -t "${IMAGE_NAME}-base" -f Dockerfile.base $BUILD_CONTEXT
-
-echo "Building final image..."
-docker build -t "$IMAGE_NAME:$IMAGE_TAG" --cache-from "${IMAGE_NAME}-base" $BUILD_CONTEXT
-
-# Clean up intermediate image (optional)
-docker image rm "${IMAGE_NAME}-base" 2> /dev/null
+# Multi-stage build for efficiency
+echo "Building Docker image: $IMAGE_NAME:$IMAGE_TAG"
+docker build -t "$IMAGE_NAME:$IMAGE_TAG" --build-arg BRANCH_NAME="$BRANCH_NAME" $BUILD_CONTEXT
 
 echo "Successfully built Docker image: $IMAGE_NAME:$IMAGE_TAG"
 

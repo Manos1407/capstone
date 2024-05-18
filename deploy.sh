@@ -11,7 +11,7 @@ if ! docker ps >/dev/null 2>&1; then
 fi
 
 # Check if image exists locally
-if ! docker image inspect $IMAGE_NAME:$TAG >/dev/null 2>&1; then
+if ! docker image inspect "$IMAGE_NAME:$TAG" >/dev/null 2>&1; then
   echo "Error: Image $IMAGE_NAME:$TAG not found locally!"
   echo "Please build the image first using build.sh"
   exit 1
@@ -22,7 +22,7 @@ HOST_PORT=80
 CONTAINER_PORT=80
 
 # Run the container with port mapping (use single quotes for clarity)
-docker run -d -p $HOST_PORT:$CONTAINER_PORT $IMAGE_NAME:$TAG
+docker run -d -p "$HOST_PORT:$CONTAINER_PORT" "$IMAGE_NAME:$TAG"
 
 echo "Container for image $IMAGE_NAME:$TAG started successfully!"
 
