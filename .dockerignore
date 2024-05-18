@@ -1,3 +1,0 @@
-# Ignore Docker socket and temporary build files
-**/.dockerenv
-**/build/*
